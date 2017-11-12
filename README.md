@@ -31,7 +31,7 @@ brew install sfml
 cmake .
 make HackyBadge17
 
-open HackyBadge17
+open HackyBadge17.app
 
 ```
 
