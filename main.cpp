@@ -246,7 +246,7 @@ int main() {
 
     std::cout << cwd;
 
-    sf::RenderWindow window(sf::VideoMode(badge_width,badge_height,32), cwd);
+    sf::RenderWindow window(sf::VideoMode(badge_width,badge_height,32), "Hackaday 17 Badge Emulator!");
     window.setVerticalSyncEnabled(false);
     window.setFramerateLimit(0);
     window.clear(sf::Color::Black);
