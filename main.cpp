@@ -291,6 +291,12 @@ int main() {
                 window.close();
 
             }
+            // reset button highlight
+            buttonPower.setFillColor(sf::Color::Transparent);
+            button1.setFillColor(sf::Color::Transparent);
+            button2.setFillColor(sf::Color::Transparent);
+            button3.setFillColor(sf::Color::Transparent);
+            button4.setFillColor(sf::Color::Transparent);
 
             switch (event.type) {
                 case sf::Event::TextEntered:
@@ -301,21 +307,26 @@ int main() {
                         if (event.mouseButton.button == sf::Mouse::Left){
                             sf::Vector2f click = sf::Vector2f(sf::Mouse::getPosition(window));
 
-
+                            sf::Color highlight = sf::Color(0,200,255,150);
                             if (buttonPower.getGlobalBounds().contains(click)){
                                 butpress |= powerbut;
+                                buttonPower.setFillColor(highlight);
                             }
                             if (button4.getGlobalBounds().contains(click)){
                                 butpress |= but4;
+                                button4.setFillColor(highlight);
                             }
                             if (button3.getGlobalBounds().contains(click)){
                                 butpress |= but3;
+                                button3.setFillColor(highlight);
                             }
                             if (button2.getGlobalBounds().contains(click)){
                                 butpress |= but2;
+                                button2.setFillColor(highlight);
                             }
                             if (button1.getGlobalBounds().contains(click)){
                                 butpress |= but1;
+                                button1.setFillColor(highlight);
                             }
 
                         }
