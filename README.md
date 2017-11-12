@@ -18,6 +18,7 @@ Have an improvement/fix/awesomeness to add? Send us pull requests!
 - cmake
 - SFML (https://www.sfml-dev.org/)
 
+
 #### Recommended:
 - CLion IDE
 
@@ -35,6 +36,10 @@ open HackyBadge17.app
 
 ```
 
+### Controls:
+
+- Accelerometer: Hold **Left-Shift** and **move mouse** around to simulate X/Y accelerometer axis.
+- Buttons: Number **Keys 1-5** send button events, or click the mouse on the buttons.
 
 ### From CLion:
 
