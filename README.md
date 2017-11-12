@@ -1,6 +1,8 @@
 # hackaday2017-badge-emul
 # Welcome to the Unofficial Hackaday 2017 Badge Emulator for all your hacking needs!
 
+![Alt text](Hackaday2017BadgeEmul.png?raw=true "Badge Emulator Screenshot")
+
 ### Features:
 - Framebuffer emulation of the display.
 - Button press emulation (use number keys 1 - 5)
