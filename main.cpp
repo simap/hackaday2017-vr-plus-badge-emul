@@ -209,7 +209,16 @@ void update_emulation_vars() {
     if(accz > 16000) accz = 16000;
     if(accz < -16000) accz = -16000;
 
+}
 
+
+sf::CircleShape buildButton(int posX, int posY){
+    sf::Texture buttonTexture;
+    sf::CircleShape button;
+    button.setRadius(13);
+    button.setFillColor(sf::Color::Transparent);
+    button.setPosition(posX, posY);
+    return button;
 
 }
 
@@ -240,36 +249,41 @@ int main() {
     APP_FUNC(act_init);
     // TODO: Sleep some time?
     APP_FUNC(act_start);
-
-    char cwd[1024];
-    getcwd(cwd, 1024);
-
-    std::cout << cwd;
-
-    sf::RenderWindow window(sf::VideoMode(badge_width,badge_height,32), "Hackaday 17 Badge Emulator!");
+    sf::RenderWindow window(sf::VideoMode(badge_width,badge_height,32),"Hackaday 17 Badge Emulator!");
     window.setVerticalSyncEnabled(false);
     window.setFramerateLimit(0);
     window.clear(sf::Color::Black);
 
+    // Badge
     sf::Texture badgeTexture;
     badgeTexture.create(badge_width, badge_height);
 
     if (!badgeTexture.loadFromFile(get_bundle("badge", "png"), sf::IntRect(0, 0, badge_width, badge_height))) {
         // error...
     }
+    sf::Sprite badgeSprite(badgeTexture);
 
-    sf::Sprite sprite(badgeTexture);
-
+    // Viewer display
     sf::Texture viewerTexture;
     viewerTexture.create(viewer_dimension, viewer_dimension);
     sf::Sprite viewerSprite(viewerTexture);
     viewerSprite.setScale(2, 2);
+    //viewerTexture.update(pixels);
+    //viewerSprite.setPosition(168, 95);
+
+    // build Buttons
+    sf::CircleShape buttonPower = buildButton(201, 35);
+    sf::CircleShape button4 = buildButton(382, 35);
+    sf::CircleShape button3 = buildButton(379, 387);
+    sf::CircleShape button2 = buildButton(288, 387);
+    sf::CircleShape button1 = buildButton(197, 387);
+
+
     master_clock.restart();
 
+
     while(window.isOpen()){
-
         sf::Event event;
-
         while(window.pollEvent(event)) {
 
             if (event.type == sf::Event::Closed) {
@@ -282,7 +296,31 @@ int main() {
                 case sf::Event::TextEntered:
                     button_pressed(event);
                     break;
+                case sf::Event::MouseButtonPressed:
+                    {
+                        if (event.mouseButton.button == sf::Mouse::Left){
+                            sf::Vector2f click = sf::Vector2f(sf::Mouse::getPosition(window));
 
+
+                            if (buttonPower.getGlobalBounds().contains(click)){
+                                butpress |= powerbut;
+                            }
+                            if (button4.getGlobalBounds().contains(click)){
+                                butpress |= but4;
+                            }
+                            if (button3.getGlobalBounds().contains(click)){
+                                butpress |= but3;
+                            }
+                            if (button2.getGlobalBounds().contains(click)){
+                                butpress |= but2;
+                            }
+                            if (button1.getGlobalBounds().contains(click)){
+                                butpress |= but1;
+                            }
+
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
@@ -298,19 +336,16 @@ int main() {
 
             APP_FUNC(act_poll);
 
-
-
-//            for(int i = 0; i < 256*256*4; i += 4) {
-//                pixels[i] = rand()%255; // obviously, assign the values you need here to form your color
-//                pixels[i+1] = rand()%255;
-//                pixels[i+2] = rand()%255;
-//                pixels[i+3] = 255;
-//            }
-
             viewerTexture.update(pixels);
             viewerSprite.setPosition(168, 95);
-            window.draw(sprite);
+
+            window.draw(badgeSprite);
             window.draw(viewerSprite);
+            window.draw(buttonPower);
+            window.draw(button4);
+            window.draw(button3);
+            window.draw(button2);
+            window.draw(button1);
 
         }
 
