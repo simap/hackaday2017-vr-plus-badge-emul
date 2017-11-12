@@ -1,5 +1,28 @@
 #include <SFML/Graphics.hpp>
 #include <unistd.h>
+#include <iostream>
+
+// TODO: Make this portable to Linux/Windows
+#include <CoreFoundation/CoreFoundation.h>
+
+const char* get_bundle(const char* filename, const char* extension) {
+
+    // Get a reference to the main bundle
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+
+// Get a reference to the file's URL
+    CFURLRef imageURL = CFBundleCopyResourceURL(mainBundle, CFSTR("badge"), CFSTR("png"), NULL);
+
+// Convert the URL reference into a string reference
+    CFStringRef imagePath = CFURLCopyFileSystemPath(imageURL, kCFURLPOSIXPathStyle);
+
+// Get the system encoding method
+    CFStringEncoding encodingMethod = CFStringGetSystemEncoding();
+
+// Convert the string reference into a C string
+    return CFStringGetCStringPtr(imagePath, encodingMethod);
+}
+
 extern "C" {
 #include "cambadge_emul.h"
 
@@ -218,14 +241,20 @@ int main() {
     // TODO: Sleep some time?
     APP_FUNC(act_start);
 
-    sf::RenderWindow window(sf::VideoMode(badge_width,badge_height,32),"Badge Emulator");
+    char cwd[1024];
+    getcwd(cwd, 1024);
+
+    std::cout << cwd;
+
+    sf::RenderWindow window(sf::VideoMode(badge_width,badge_height,32), cwd);
     window.setVerticalSyncEnabled(false);
     window.setFramerateLimit(0);
     window.clear(sf::Color::Black);
 
     sf::Texture badgeTexture;
     badgeTexture.create(badge_width, badge_height);
-    if (!badgeTexture.loadFromFile("../../../../resources/badge.png", sf::IntRect(0, 0, badge_width, badge_height))) {
+
+    if (!badgeTexture.loadFromFile(get_bundle("badge", "png"), sf::IntRect(0, 0, badge_width, badge_height))) {
         // error...
     }
 

@@ -60,11 +60,25 @@ include_directories("${SFML_DIR}/include")
 
 
 set(SOURCE_FILES main.cpp "${EMULATION_APP}.c")
-add_executable(SFMLDemo MACOSX_BUNDLE ${SOURCE_FILES})
 
-set_target_properties(SFMLDemo PROPERTIES COMPILE_DEFINITIONS "CAMBADGE_EMUL=1 APP_FUNC=${EMULATION_APP}")
+set(RESOURCE_FILES
+        resources/badge.png
+        )
+
+add_executable(SFMLDemo MACOSX_BUNDLE ${SOURCE_FILES} ${RESOURCE_FILES})
+
+set_target_properties(SFMLDemo PROPERTIES COMPILE_DEFINITIONS "CAMBADGE_EMUL=1")
 target_compile_definitions(SFMLDemo PRIVATE APP_FUNC=${EMULATION_APP})
 
+target_link_libraries(SFMLDemo "-framework CoreFoundation")
+
+
+
+set_target_properties(SFMLDemo PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_FRAMEWORK_IDENTIFIER org.cmake.ExecutableTarget
+        RESOURCE "${RESOURCE_FILES}"
+        )
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/SFML-2.4.2-osx-clang/cmake/Modules")
 find_package(SFML REQUIRED system window graphics network audio)
