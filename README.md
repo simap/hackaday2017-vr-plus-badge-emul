@@ -5,7 +5,9 @@
 
 ### Features:
 - Framebuffer emulation of the display.
-- Button press emulation (use number keys 1 - 5)
+- Buttons
+    - click on the button with mouse.
+    - shortcut keys (use number keys 1 - 5)
 - Accelerometer emulation with mouse (hold shift and move the mouse to emulate X/Y movements).
 
 Have an improvement/fix/awesomeness to add? Send us pull requests!
