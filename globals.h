@@ -1,3 +1,4 @@
+#include <stdio.h>
 // global variables, macros and function prototypes
 // also documentation on global variables and useful functions
 
@@ -85,7 +86,7 @@ extern headerbuftype headerbuf;
 
 //________________________________________________________________________________ structs for filesystem
 
-extern FSFILE * fptr; // file system struct for access to current open file
+extern FILE * fptr; // file system struct for access to current open file
 extern SearchRec searchfile, searchdir; // struct for listing files with FSfindfirst
 
 //________________________________________________________________________________ misc global state info 

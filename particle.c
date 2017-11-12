@@ -1,7 +1,11 @@
 
+#ifdef CAMBADGE_EMUL
+#include "cambadge_emul.h"
+#else
 #include "cambadge.h"
-#include "globals.h"
+#endif
 
+#include "globals.h"
 
 #define maxpixsize 5
 #define minpixsize 2

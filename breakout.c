@@ -1,7 +1,12 @@
 // template demonstration application for camera badge
 // new apps need to be added to list in applist.h
 
+#ifdef CAMBADGE_EMUL
+#include "cambadge_emul.h"
+#else
 #include "cambadge.h"
+#endif
+
 #include "globals.h"
 
 // states used by this application
@@ -14,10 +19,22 @@
 #define BALLSIZE 6
 #define BALLXSTART  12
 #define BALLYSTART  80
+
+
+#ifdef CAMBADGE_EMUL
+
+// compensate for frequency is quiet different on emulator for now
+#define BALLXSTARTSPEED 2
+#define BALLYSTARTSPEED 2
+#define GAMECLOCKDIVISOR  2
+
+#else
+
 #define BALLXSTARTSPEED 200
 #define BALLYSTARTSPEED 200
-
 #define GAMECLOCKDIVISOR  24
+
+#endif
 
 #define PADDLESIZEX 36
 #define PADDLESIZEY 3

@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=cambadge.X
+PROJECTNAME=hackaday2017-badge-emul
 
 # Active Configuration
 DEFAULTCONF=Normal

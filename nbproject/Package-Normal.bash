@@ -10,9 +10,9 @@ CND_CONF=Normal
 CND_DISTDIR=dist
 TMPDIR=build/${CND_CONF}/${IMAGE_TYPE}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/cambadge.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-OUTPUT_BASENAME=cambadge.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-PACKAGE_TOP_DIR=cambadge.x/
+OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/hackaday2017-badge-emul.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+OUTPUT_BASENAME=hackaday2017-badge-emul.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+PACKAGE_TOP_DIR=hackaday2017-badge-emul/
 
 # Functions
 function checkReturnCode
@@ -57,15 +57,15 @@ mkdir -p ${TMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}/cambadge.x/bin
+makeDirectory ${TMPDIR}/hackaday2017-badge-emul/bin
 copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
 
 # Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/package/cambadge.x.tar
+rm -f ${CND_DISTDIR}/${CND_CONF}/package/hackaday2017-badge-emul.tar
 cd ${TMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/cambadge.x.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/hackaday2017-badge-emul.tar *
 checkReturnCode
 
 # Cleanup
