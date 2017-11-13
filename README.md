@@ -14,7 +14,7 @@ I didn't write any of this before badge pickup on Friday for the early badge hac
 
 ## Trying It out for Yourself
 
-There is an [awesome badge emulator](https://github.com/graphiq/hackaday2017-badge-emul) that can run the maze with minimal hackery. 
+There is a for of the [awesome badge emulator](https://github.com/graphiq/hackaday2017-badge-emul) that can runs the maze with minimal hackery. 
 
 You might still find one (or two!) of these amazing badges on [Tindie](https://www.tindie.com/products/hackadaystore/2017-hackaday-superconference-badge)
 
