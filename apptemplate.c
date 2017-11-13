@@ -1,7 +1,11 @@
 // template demonstration application for camera badge
 // new apps need to be added to list in applist.h
 
+#ifdef CAMBADGE_EMUL
+#include "cambadge_emul.h"
+#else
 #include "cambadge.h"
+#endif
 #include "globals.h"
 
 // states used by this application
@@ -10,7 +14,7 @@
 #define s_run 1
 #define s_freeze 2
 
-char* demoapp(unsigned int action)
+char* apptemplate(unsigned int action)
 {
   static unsigned int state,colour;
   unsigned int x,y,i;

@@ -45,6 +45,9 @@ typedef union {
 #include "font6x8.inc"
 
 sf::Clock master_clock;
+sf::Sprite viewerSprite;
+sf::RenderWindow* pWindow;
+sf::Texture viewerTexture;
 
 //
 // EMULATED VARIABLES
@@ -180,6 +183,14 @@ void dispchar(unsigned char c) {// display 1 character, do control characters
         case 2: //0.5s delay
             // delayus(500000);
             // Use sfml to sleep
+            // HACK: We refresh display here because most printf delays are designed to freeze the framebuffer
+            viewerTexture.update(pixels);
+
+            viewerSprite.setPosition(168, 95);
+
+            pWindow->draw(viewerSprite);
+            pWindow->display();
+
         sf::sleep(sf::milliseconds(500));
             break;
         case 3: // half space
@@ -409,13 +420,12 @@ void button_pressed(const sf::Event& event)
 
 int main() {
 
-    APP_FUNC(act_init);
-    // TODO: Sleep some time?
-    APP_FUNC(act_start);
+
     sf::RenderWindow window(sf::VideoMode(badge_width,badge_height,32),"Hackaday 17 Badge Emulator!");
     window.setVerticalSyncEnabled(false);
     window.setFramerateLimit(0);
     window.clear(sf::Color::Black);
+    pWindow = &window;
 
     // Badge
     sf::Texture badgeTexture;
@@ -427,9 +437,10 @@ int main() {
     sf::Sprite badgeSprite(badgeTexture);
 
     // Viewer display
-    sf::Texture viewerTexture;
+
     viewerTexture.create(viewer_dimension, viewer_dimension);
-    sf::Sprite viewerSprite(viewerTexture);
+    viewerSprite.setTexture(viewerTexture);
+
     viewerSprite.setScale(2, 2);
     //viewerTexture.update(pixels);
     //viewerSprite.setPosition(168, 95);
@@ -443,6 +454,10 @@ int main() {
 
 
     master_clock.restart();
+
+    APP_FUNC(act_init);
+    // TODO: Sleep some time?
+    APP_FUNC(act_start);
 
 
     while(window.isOpen()){
