@@ -49,6 +49,8 @@ sf::Sprite viewerSprite;
 sf::RenderWindow* pWindow;
 sf::Texture viewerTexture;
 
+unsigned char frame_limit = 0;
+
 //
 // EMULATED VARIABLES
 //
@@ -413,6 +415,15 @@ void button_pressed(const sf::Event& event)
             break;
         case '5':
             butpress |= but5;
+            break;
+
+        case '0':
+            frame_limit = ~frame_limit;
+            if(frame_limit) {
+                pWindow->setFramerateLimit(60);
+            } else {
+                pWindow->setFramerateLimit(0);
+            }
             break;
     }
 }

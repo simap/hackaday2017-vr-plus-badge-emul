@@ -4,9 +4,10 @@ cmake_minimum_required(VERSION 3.8)
 # Set the name of the app that you are emulating here
 #
 
-set(EMULATION_APP "apptemplate")
+#set(EMULATION_APP "apptemplate")
+
+set(EMULATION_APP "breakout")
 #set(EMULATION_APP "particle")
-#set(EMULATION_APP "breakout")
 
 
 project(hackaday2017)
