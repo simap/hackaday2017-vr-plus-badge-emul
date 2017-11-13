@@ -2,7 +2,11 @@
 
     #define startchar 24
 
-    const char FONT6x8[nchars_6x8][8] = 
+#ifdef CAMBADGE_EMUL // Clang compatibility fix
+    const unsigned char FONT6x8[nchars_6x8][8] =
+#else
+    const char FONT6x8[nchars_6x8][8]
+#endif
 {
 
  0x30,0x78,0xfc,0x30,0x30,0x30,0x30,0x00, // 24 up arrow 

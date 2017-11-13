@@ -40,6 +40,10 @@ typedef union {
 
 }
 
+#define rgbto16(r,g,b) (((r)&0xF8)<<8 | ((g) & 0xfc)<<3 | ((b)&0xf8)>>3) // convert RGB8,8,8 to RGB565
+
+#include "font6x8.inc"
+
 sf::Clock master_clock;
 
 //
@@ -67,6 +71,13 @@ unsigned int powerdowntimer; // only global as we want to reset it on serial com
 // Zero this if you want to prevent powerdown
 // unsigned int reptimer; // auto-repeat timer - set this to zero to disable auto-repeat
 
+unsigned char dispx, dispy; // current cursor x,y position ( pixels) 0..127
+unsigned short fgcol, bgcol; // foreground and background colours , RGB565
+
+unsigned char dispuart = 0; // flag to divert printf output to UART2 for debugging 0 = normal, 1 = UART 1, 2 = UART 2
+// set bit 4 to output to serial and screen
+
+
 //event flags set once on poll
 unsigned char butpress = 0; // buttons pressed - bits as per butstate
 unsigned char cardinsert; // cardmountd indicates file ops can be done. cardinsert is insert/remove event flag set once in polling loop
@@ -77,6 +88,15 @@ unsigned int tick; // system ticks normally set to 1 every 20ms, but if apps tak
 // Emulated functions
 //
 extern "C" {
+
+void putpixel(unsigned int xstart, unsigned int ystart, unsigned int col) {
+    unsigned int offset = (ystart * 128 + xstart) * 4;
+    pixels[offset] = (col & 0xF800) >> 8;
+    pixels[offset+1] = (col & 0x07E0) >> 3;
+    pixels[offset+2] = (col & 0x1F) << 3;
+    pixels[offset + 3] = 255;
+}
+
 void plotblock(unsigned int xstart, unsigned int ystart, unsigned int xsize, unsigned int ysize, unsigned int col) {
     // (Y * width + x) * 4
     for (unsigned int cy = 0; cy < ysize; ++cy) {
@@ -152,6 +172,127 @@ void dispimage(unsigned int xstart, unsigned int ystart, unsigned int xsize, uns
 
         } // for x
     }// for y
+}
+
+void dispchar(unsigned char c) {// display 1 character, do control characters
+    unsigned int x, y, b, m;
+
+    if (dispuart) {
+        if (dispuart & dispuart_u1) putchar(c);
+        if(!(dispuart & dispuart_screen) ) return;
+    }
+
+    switch (c) { // control characters
+
+        case 2: //0.5s delay
+            // delayus(500000);
+            // TODO: Use sfml to sleep
+            break;
+        case 3: // half space
+            dispx += charwidth / 2;
+            break;
+        case 4: // short backspace
+            dispx -=3;
+            break;
+        case 7:
+            x = fgcol;
+            fgcol = bgcol;
+            bgcol = x;
+            break; // invert
+
+        case 8:// BS
+            if (dispx >= charwidth) dispx -= charwidth;
+            break;
+        case 10:// crlf
+            dispx = 0;
+            dispy += vspace;
+            if (dispy >= dispheight) dispy = 0;
+            break;
+        case 12: // CLS
+            plotblock(0, 0, dispwidth, dispheight, bgcol);
+            dispx = dispy = 0;
+            break;
+        case 13:
+            dispx = 0;
+            break; // CR
+        case 14 : // grey
+            fgcol=rgbto16(128,128,128);
+            break;
+
+        case 0x80 ... 0x93: // tab x
+            dispx = (c & 0x1f) * charwidth;
+            break;
+        case 0xa0 ... 0xaf: // tab y
+            dispy = (c & 0x0f) * vspace;
+            break;
+
+        case 0xc0 ... 0xff: // set text primary colour 0b11rgbRGB bg FG
+            fgcol = rgbto16((c & 1) ? 255 : 0, (c & 2) ? 255 : 0, (c & 4) ? 255 : 0);
+            bgcol = rgbto16((c & 8) ? 255 : 0, (c & 16) ? 255 : 0, (c & 32) ? 255 : 0);
+            break;
+
+        case startchar ... (nchars_6x8 + startchar - 1): // displayed characters
+        {
+            c -= startchar;
+
+            for (y = 0; y != charheight; y++) {
+                b = FONT6x8[c][y];
+
+                for (x = 0; x != charwidth; x++) {
+                    auto dcol = (b & 0x80) ? fgcol : bgcol;
+                    b <<= 1;
+                    putpixel(dispx+x, dispy+y, dcol);
+                }
+            }
+
+        }
+            break;
+//            oled_cs_lo;
+//            oledcmd(0x175);
+//            oledcmd(dispx);
+//            oledcmd(dispx + charwidth - 1); // column address
+//#if oled_upscan==1
+//            oledcmd(0x115);
+//            oledcmd((dispy + charheight - 1)^127);
+//            oledcmd(dispy^127); // row address
+//
+//#else
+//        oledcmd(0x115);
+//            oledcmd(dispy);
+//            oledcmd(dispy + charheight - 1); // row address
+//#endif
+//            oledcmd(0x15c); //send data
+//            SPI1CONbits.MODE16 = 1; // 16 bit SPI so 1 transfer per pixel
+//            oled_cd_hi;
+//            oled_cs_lo;
+//            c -= startchar;
+//            for (y = 0; y != charheight; y++) {
+//#if oled_upscan==1
+//                b = FONT6x8[c][7 - y]; //lookup outside loop for speed
+//#else
+//                b = FONT6x8[c][y]; //lookup outside loop for speed
+//#endif
+//                for (x = 0; x != charwidth; x++) {
+//                    while (SPI1STATbits.SPITBF);
+//                    SPI1BUF = (b & 0x80) ? fgcol : bgcol;
+//                    b <<= 1;
+//                }
+//            } //y
+//            while (SPI1STATbits.SPIBUSY); // wait until last byte sent before releasing CS
+//            SPI1CONbits.MODE16 = 0;
+//            oled_cs_hi;
+//            dispx += charwidth;
+//            if (dispx >= dispwidth) {
+//                dispx = 0;
+//                dispy += vspace;
+//                if (dispy >= dispheight) dispy = 0;
+//            }
+
+
+    }//switch
+
+    // oled_cs_hi;
+
 }
 
 void mplotblock(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned int colour,
@@ -370,3 +511,4 @@ int main() {
     return 0;
 
 }
+
