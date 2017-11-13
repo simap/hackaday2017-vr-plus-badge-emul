@@ -112,13 +112,6 @@ void plotblock(unsigned int xstart, unsigned int ystart, unsigned int xsize, uns
 
 }
 
-int emul_printf(const char * str, ...) {
-    if(!strncmp(str, cls, 3)) {
-        plotblock(0,0, 128,128, 0);
-    }
-    return 0;
-}
-
 void dispimage(unsigned int xstart, unsigned int ystart, unsigned int xsize, unsigned int ysize, unsigned int format,
                unsigned char *imgaddr) { // display image or solid colour in various formats. Note assumes format = bytes per pixel
 
@@ -186,7 +179,8 @@ void dispchar(unsigned char c) {// display 1 character, do control characters
 
         case 2: //0.5s delay
             // delayus(500000);
-            // TODO: Use sfml to sleep
+            // Use sfml to sleep
+        sf::sleep(sf::milliseconds(500));
             break;
         case 3: // half space
             dispx += charwidth / 2;
@@ -245,6 +239,13 @@ void dispchar(unsigned char c) {// display 1 character, do control characters
                 }
             }
 
+            dispx += charwidth;
+            if (dispx >= dispwidth) {
+                dispx = 0;
+                dispy += vspace;
+                if (dispy >= dispheight) dispy = 0;
+            }
+
         }
             break;
 //            oled_cs_lo;
@@ -293,6 +294,27 @@ void dispchar(unsigned char c) {// display 1 character, do control characters
 
     // oled_cs_hi;
 
+}
+
+int emul_printf(const char * str, ...) {
+
+    char dest[1024];
+
+    va_list args;
+    va_start(args, str);
+
+
+    vsprintf(dest, str, args);
+
+    auto slen = strlen(dest);
+
+    for(int i = 0; i < slen; ++i) {
+        dispchar(dest[i]);
+    }
+
+    va_end(args);
+
+    return 0;
 }
 
 void mplotblock(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned int colour,
